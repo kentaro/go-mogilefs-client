@@ -59,3 +59,10 @@ func (c *Client) init(args map[string]interface{}) *Client {
 
 	return c
 }
+
+func (c *Client) newFile() (file interface{}, err ReadonlyError) {
+	if c.Readonly {
+		return nil, ReadonlyError{}
+	}
+	return
+}
