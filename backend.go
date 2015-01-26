@@ -35,3 +35,7 @@ func NewBackend(args map[string]interface{}) (b *Backend) {
 
 	return
 }
+
+func (b *Backend) Reload(map[string]interface{}) {
+
+}

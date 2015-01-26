@@ -11,44 +11,51 @@ type Client struct {
 }
 
 func NewClient(args map[string]interface{}) (c *Client) {
-	var domain string
+	c = &Client{}
+	return c.init(args)
+}
+
+func (c *Client) Reload(args map[string]interface{}) *Client {
+	return c.init(args)
+}
+
+func (c *Client) init(args map[string]interface{}) *Client {
 	switch t := args["Domain"].(type) {
 	case string:
-		domain = t
+		c.Domain = t
 	default:
 		log.Fatal("`Domain` must be a string value.")
 	}
 
-	var timeout int
-	switch t := args["Timeout"].(type) {
-	case int:
-		timeout = t
-	case nil:
-		timeout = 3
-	default:
-		log.Fatal("`Timeout` must be an int value.")
-	}
-
-	var readonly bool
 	switch t := args["Readonly"].(type) {
 	case bool:
-		readonly = t
+		c.Readonly = t
 	case nil:
-		readonly = false
+		c.Readonly = false
 	default:
 		log.Fatal("`Readonly` must be a boolean value.")
 	}
 
-	backend := NewBackend(map[string]interface{}{
-		"Hosts":   args["Hosts"],
-		"Timeout": timeout,
-	})
+	if c.Backend == nil {
+		var timeout int
+		switch t := args["Timeout"].(type) {
+		case int:
+			timeout = t
+		case nil:
+			timeout = 3
+		default:
+			log.Fatal("`Timeout` must be an int value.")
+		}
 
-	c = &Client{
-		Domain:   domain,
-		Backend:  backend,
-		Readonly: readonly,
+		c.Backend = NewBackend(map[string]interface{}{
+			"Hosts":   args["Hosts"],
+			"Timeout": timeout,
+		})
+	} else {
+		c.Backend.Reload(map[string]interface{}{
+			"Hosts": args["Hosts"],
+		})
 	}
 
-	return
+	return c
 }
