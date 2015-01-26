@@ -1,29 +1,35 @@
 package mogilefs
 
 type Backend struct {
-	Host    string
+	Hosts   []string
 	Timeout int
 }
 
 func NewBackend(args map[string]interface{}) (b *Backend) {
-	var host string
-	switch checked := args["Host"].(type) {
+	var hosts []string
+	switch t := args["Hosts"].(type) {
 	case string:
-		host = checked
+		hosts = []string{t}
+	case []string:
+		for _, v := range t {
+			hosts = append(hosts, v)
+		}
 	default:
-		panic("`domain` must be a string value.")
+		panic("`Hosts` must be either a string value or an array of strings.")
 	}
 
 	var timeout int
-	switch checked := args["Timeout"].(type) {
+	switch t := args["Timeout"].(type) {
 	case int:
-		timeout = checked
+		timeout = t
+	case nil:
+		timeout = 3
 	default:
-		panic("`timeout` must be an int value.")
+		panic("`Timeout` must be an int value.")
 	}
 
 	b = &Backend{
-		Host:    host,
+		Hosts:   hosts,
 		Timeout: timeout,
 	}
 

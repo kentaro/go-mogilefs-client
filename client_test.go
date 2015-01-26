@@ -8,7 +8,7 @@ import (
 func TestNewClient(t *testing.T) {
 	actual := NewClient(map[string]interface{}{
 		"Domain": "foo.com::my_namespace",
-		"Host":   "10.0.0.2:7001",
+		"Hosts":  "10.0.0.2:7001",
 	})
 	expected := "*mogilefs.Client"
 
